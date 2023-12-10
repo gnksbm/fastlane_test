@@ -72,3 +72,6 @@ Tuist/Dependencies
 # XCConfig
 XCConfig/
 **.xcconfig
+
+# fastlane
+.env
