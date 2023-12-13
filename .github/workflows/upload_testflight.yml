@@ -25,7 +25,7 @@ jobs:
         with:
           repository: Pepsi-Club/YamYamPick-ignored
           path: XCConfig/
-          token: ${{ secrets.ACTION_TOKEN }}
+          token: ${{ secrets.IGNORED_TOKEN }}
 
       - name: Install Tuist
         run: curl -Ls https://install.tuist.io|bash
