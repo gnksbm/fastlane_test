@@ -6,7 +6,7 @@ extension Project {
     // MARK: Refact
     public static func makeProject(
         name: String,
-        targetKinds: TargetKind,
+        moduleType: ModuleType,
         entitlements: Path? = nil,
         isTestable: Bool = false,
         hasResource: Bool = false,
@@ -14,7 +14,7 @@ extension Project {
     ) -> Self {
         var targets = [Target]()
         targets = {
-            switch targetKinds {
+            switch moduleType {
             case .app:
                 var result = [Target]()
                 let app = appTarget(name: name, entitlements: entitlements, dependencies: dependencies)
@@ -142,7 +142,7 @@ extension Project {
 }
 import ProjectDescription
 
-public enum TargetKind {
+public enum ModuleType {
     case app, framework, feature
     
     var product: Product {

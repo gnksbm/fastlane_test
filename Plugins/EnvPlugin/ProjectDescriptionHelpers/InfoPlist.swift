@@ -10,13 +10,18 @@ import ProjectDescription
 public extension InfoPlist {
     static let infoPlist: Self = .extendingDefault(
         with: .baseInfoPlist.merging(
-            .additionalInfoPlist,
-            uniquingKeysWith: { $1 }
+            .additionalInfoPlist, uniquingKeysWith: { oldValue, newValue in
+                newValue
+            }
         )
     )
 }
 
 public extension [String: InfoPlist.Value] {
+    static let additionalInfoPlist: Self = [
+        "ITSAppUsesNonExemptEncryption": "NO"
+    ]
+    
     static let baseInfoPlist: Self = [
         "CFBundleDisplayName": .bundleDisplayName,
         "CFBundleShortVersionString": .bundleShortVersionString,
@@ -33,9 +38,5 @@ public extension [String: InfoPlist.Value] {
                 ]
             ]
         ],
-    ]
-    
-    static let additionalInfoPlist: Self = [
-        :
     ]
 }

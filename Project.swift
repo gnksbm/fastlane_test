@@ -5,6 +5,6 @@ import EnvPlugin
 
 let project = Project.makeProject(
     name: .appName,
-    targetKinds: .app,
+    moduleType: .app,
     dependencies: []
 )
