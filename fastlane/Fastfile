@@ -1,12 +1,72 @@
+APP_NAME = "YamYamPick"
+SCHEME = "YamYamPick"
+
 default_platform(:ios)
 
 platform :ios do
-  desc "Description of what the lane does"
-  lane :match_test do
+  desc "Download Ignored"
+  lane :getig do |options|
+    Dir.chdir("../") do
+      github_access_token = sh("git config --global user.password")
+      sh("make download-privates token=#{github_access_token}")
+    end
+  end
+
+  desc "Local Push to TestFlight"
+  lane :tflocal do |options|
     match(
         type: "appstore",
-        readonly: true,
-        app_identifier: BUNDLE_ID
+        readonly: true
     )
+
+    app_store_connect_api_key(
+      key_id: ENV['APP_STORE_KEY_ID'],
+      issuer_id: ENV['APP_STORE_ISSUER_ID'],
+      key_content: ENV['APP_STORE_PRIVATE_KEY'],
+      is_key_content_base64: true, 
+      in_house: false
+    )
+    
+    build_app(
+      project: "#{APP_NAME}.xcodeproj",
+      scheme: "#{SCHEME}",
+      export_method: "app-store"
+    )
+
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
+
+  desc "Remote Push to TestFlight"
+  lane :tfremote do |options|
+    create_keychain(
+      name: ENV["KEYCHAIN_NAME"],
+      password: ENV["KEYCHAIN_PASSWORD"],
+      timeout: 1800,
+      default_keychain: true,
+      unlock: true,
+      lock_when_sleeps: false
+    )
+
+    app_store_connect_api_key(
+      key_id: ENV['APP_STORE_KEY_ID'],
+      issuer_id: ENV['APP_STORE_ISSUER_ID'],
+      key_content: ENV['APP_STORE_PRIVATE_KEY'],
+      is_key_content_base64: true, 
+      in_house: false
+    )
+      
+    match(
+      readonly: true,
+      keychain_name: ENV["KEYCHAIN_NAME"],
+      keychain_password: ENV["KEYCHAIN_PASSWORD"],
+    )
+    
+    build_app(
+      project: "#{APP_NAME}.xcodeproj",
+      scheme: "#{SCHEME}",
+      export_method: "app-store"
+    )
+
+    upload_to_testflight(skip_waiting_for_build_processing: true)
   end
 end
